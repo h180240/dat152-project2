@@ -23,26 +23,44 @@ public class AuthorService {
 	@Autowired
 	private AuthorRepository authorRepository;
 		
-	
 	public Author findById(long id) throws AuthorNotFoundException {
 		
 		Author author = authorRepository.findById(id)
-				.orElseThrow(()-> new AuthorNotFoundException("Author with the id: "+id+ "not found!"));
+				.orElseThrow(() -> new AuthorNotFoundException("Author with the id: " + id + "not found"));
 		
 		return author;
 	}
 	
-	// TODO public saveAuthor(Author author)
+	// TODO
+	public Author saveAuthor(Author author) throws AuthorNotFoundException {
+		return authorRepository.save(author);
+	}
 		
-	
-	// TODO public Author updateAuthor(Author author, int id)
+	// TODO
+	public Author updateAuthor(Author author, long id) throws AuthorNotFoundException {
+		Author existingAuthor = findById(id);
 		
+		existingAuthor.setFirstname(author.getFirstname());
+		existingAuthor.setLastname(author.getLastname());
+		existingAuthor.setBooks(author.getBooks());
+		
+		return authorRepository.save(existingAuthor);
+	}
+		
+	// TODO
+	public List<Author> findAll() {
+		return (List<Author>) authorRepository.findAll();
+	}
 	
-	// TODO public List<Author> findAll()
-	
-	
-	// TODO public void deleteById(Long id) throws AuthorNotFoundException 
+	// TODO
+	public void deleteById(Long id) throws AuthorNotFoundException {
+		Author existingAuthor = findById(id);
+		authorRepository.delete(existingAuthor);
+	}
 
-	
-	// TODO public Set<Book> findBooksByAuthorId(Long id)
+	// TODO
+	public Set<Book> findBooksByAuthorId(Long id) throws AuthorNotFoundException {
+		Author author = findById(id);
+		return author.getBooks();
+	}
 }
