@@ -59,7 +59,14 @@ public class UserController {
 	
 	// TODO - createUser (@Mappings, URI=/users, and method)
 
+	
+	
 	// TODO - updateUser (@Mappings, URI, and method)
+	
+//	@PutMapping("/users/{id}")
+//	public ResponseEntity<User> updateUser(@RequestBody User user) {
+//		
+//	}
 	
 	// TODO - deleteUser (@Mappings, URI, and method)
 
