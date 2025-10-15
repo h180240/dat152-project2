@@ -13,6 +13,5 @@ import no.hvl.dat152.rest.ws.model.Author;
  * @author tdoy
  */
 public interface AuthorRepository extends JpaRepository<Author, Long> {
-	
 
 }
