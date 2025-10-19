@@ -11,6 +11,6 @@ import no.hvl.dat152.rest.ws.model.User;
 /**
  * 
  */
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends CrudRepository<User, Long> {
 
 }

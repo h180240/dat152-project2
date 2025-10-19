@@ -25,7 +25,6 @@ public class AuthorService {
 		
 	
 	public Author findById(int id) throws AuthorNotFoundException {
-		
 		Author author = authorRepository.findById(id)
 				.orElseThrow(()-> new AuthorNotFoundException("Author with the id: "+id+ "not found!"));
 		
@@ -46,14 +45,14 @@ public class AuthorService {
 	
 	
 	public List<Author> findAll() {
-		return authorRepository.findAll();
+		return (List<Author>) authorRepository.findAll();
 	}
 	
 	
 	// TODO public void deleteById(int id) throws AuthorNotFoundException 
 
 	
-	public Set<Book> findBooksByAuthorId(Long id) throws AuthorNotFoundException {
+	public Set<Book> findBooksByAuthorId(int id) throws AuthorNotFoundException {
 		Author author = this.findById(id);
 		Set<Book> books = author.getBooks();
 		return books;

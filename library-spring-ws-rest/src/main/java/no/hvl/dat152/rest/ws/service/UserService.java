@@ -26,7 +26,8 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
-
+	@Autowired
+	private OrderService orderService;
 	
 	public List<User> findAllUsers(){
 		
@@ -43,11 +44,13 @@ public class UserService {
 		return user;
 	}
 	
-	
 	// TODO public User saveUser(User user)
+	public User saveUser(User user) {
+		return userRepository.save(user);
+	}
 	
 	// TODO public void deleteUser(Long id) throws UserNotFoundException 
-	public void deleteUser(Long id) throws UserNotFoundException {
+	public void deleteUser(Long id) {
 		Optional<User> managedUser = userRepository.findById(id);
 		if (managedUser.isEmpty()) return;
 		
@@ -79,6 +82,11 @@ public class UserService {
 	}
 	
 	// TODO public void deleteOrderForUser(Long userid, Long oid)
+	public void deleteOrderForUser(Long userid, Long oid) throws UserNotFoundException, OrderNotFoundException {
+		User user = this.findUser(userid);
+		Order order = orderService.findOrder(oid);
+		user.getOrders().remove(order);
+	}
 	
 	// TODO public User createOrdersForUser(Long userid, Order order)
 	public User createOrdersForUser(Long userid, Order order) throws UserNotFoundException {

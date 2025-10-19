@@ -63,16 +63,20 @@ public class BookController {
 	
 	@PostMapping("/books")
 	public ResponseEntity<Book> createBook(@RequestBody Book book){
-		
 		Book nbook = bookService.saveBook(book);
 		
 		return new ResponseEntity<>(nbook, HttpStatus.CREATED);
 	}
 	
 	// TODO - getAuthorsOfBookByISBN (@Mappings, URI, and method)
+	@GetMapping("/books/{isbn}/authors")
+	public Set<Author> getAuthorsOfBookByISBN(@PathVariable String isbn) throws BookNotFoundException {
+		Set<Author> authors = bookService.findAuthorsOfBookByISBN(isbn);
+		return authors;
+	}
 	
 	@PutMapping("/books/{isbn}")
-	public ResponseEntity<Book> updateBookByISBN(@PathVariable String isbn, Book book) throws BookNotFoundException, UpdateBookFailedException{
+	public ResponseEntity<Book> updateBookByISBN(@PathVariable String isbn, @RequestBody Book book) throws BookNotFoundException, UpdateBookFailedException{
 		Book managedBook = bookService.updateBook(book, isbn);
 		return new ResponseEntity<Book>(managedBook, HttpStatus.OK);
 	}

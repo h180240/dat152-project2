@@ -6,6 +6,8 @@ package no.hvl.dat152.rest.ws.model;
 
 import java.time.LocalDate;
 
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -16,6 +18,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import no.hvl.dat152.rest.ws.controller.OrderController;
+import no.hvl.dat152.rest.ws.exceptions.OrderNotFoundException;
+import no.hvl.dat152.rest.ws.exceptions.UpdateOrderFailedException;
 
 /**
  * 
@@ -116,4 +121,21 @@ public class Order extends RepresentationModel<Order>{
         return "Order [isbn=" + isbn + ", expiry=" + expiry  + "]";
     }
 	
+	public void addLinks() throws OrderNotFoundException, UpdateOrderFailedException {
+		Link linkSelf = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OrderController.class)
+				.getBorrowOrder(this.getId()))
+				.withRel("self");
+		this.add(linkSelf);
+		
+		Link linkUpdateBorrowOrder = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OrderController.class)
+				.updateOrder(this.getId(), null))
+				.withRel("update_borrow_order");
+		this.add(linkUpdateBorrowOrder);
+		
+		Link linkReturn = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OrderController.class)
+				.deleteBookOrder(this.getId()))
+				.withRel("return_book");
+		this.add(linkReturn);
+	}
+	 
 }

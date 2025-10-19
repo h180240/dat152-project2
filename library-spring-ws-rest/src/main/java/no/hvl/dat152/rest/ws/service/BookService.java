@@ -61,6 +61,9 @@ public class BookService {
 	// TODO public List<Book> findAllPaginate(Pageable page)
 	
 	// TODO public Set<Author> findAuthorsOfBookByISBN(String isbn)
+	public Set<Author> findAuthorsOfBookByISBN(String isbn) throws BookNotFoundException {
+		return this.findByISBN(isbn).getAuthors();
+	}
 	
 	public void deleteById(long id) {
 		Optional<Book> managedBook = bookRepository.findById(id);

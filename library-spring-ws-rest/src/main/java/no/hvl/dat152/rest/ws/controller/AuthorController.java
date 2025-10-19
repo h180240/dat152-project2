@@ -40,13 +40,13 @@ public class AuthorController {
 	}
 	
 	@GetMapping("/authors/{id}")
-	public ResponseEntity<Author> getAuthor(@PathVariable long id) throws AuthorNotFoundException {
+	public ResponseEntity<Author> getAuthor(@PathVariable int id) throws AuthorNotFoundException {
 		Author author = authorService.findById(id);
 		return new ResponseEntity<>(author, HttpStatus.OK);
 	}
 	
 	@GetMapping("authors/{id}/books")
-	public ResponseEntity<Set<Book>> getBooksByAuthorId(@PathVariable long id) throws AuthorNotFoundException {
+	public ResponseEntity<Set<Book>> getBooksByAuthorId(@PathVariable int id) throws AuthorNotFoundException {
 		Set<Book> books = authorService.findBooksByAuthorId(id);
 		return new ResponseEntity<>(books, HttpStatus.OK);
 	}
@@ -54,7 +54,7 @@ public class AuthorController {
 	@PostMapping("/authors")
 	public ResponseEntity<Author> createAuthor(@RequestBody Author author) {
 		Author newAuthor = authorService.saveAuthor(author);
-		return new ResponseEntity<Author>(newAuthor, HttpStatus.OK);
+		return new ResponseEntity<Author>(newAuthor, HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/authors/{id}")
