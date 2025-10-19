@@ -34,6 +34,7 @@ import no.hvl.dat152.rest.ws.service.UserService;
 @RestController
 @RequestMapping("/elibrary/api/v1")
 public class UserController {
+	
 	@Autowired
 	private UserService userService;
 	@Autowired

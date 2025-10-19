@@ -28,8 +28,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import no.hvl.dat152.rest.ws.exceptions.OrderNotFoundException;
 import no.hvl.dat152.rest.ws.exceptions.UnauthorizedOrderActionException;
+import no.hvl.dat152.rest.ws.exceptions.UpdateOrderFailedException;
 import no.hvl.dat152.rest.ws.exceptions.UserNotFoundException;
 import no.hvl.dat152.rest.ws.model.Order;
+import no.hvl.dat152.rest.ws.security.IsAdmin;
 import no.hvl.dat152.rest.ws.service.OrderService;
 
 /**
@@ -37,8 +39,70 @@ import no.hvl.dat152.rest.ws.service.OrderService;
  */
 @RestController
 @RequestMapping("/elibrary/api/v1")
+@IsAdmin
 public class OrderController {
 
-	// TODO authority annotation
+	@Autowired
+	OrderService orderService;
+
+	@GetMapping("/orders")
+	public ResponseEntity<List<Order>> getAllBorrowOrders(@RequestParam(required = false) LocalDate expiry, Pageable page) {
+		List<Order> orders;
+		if (expiry == null) {
+			orders = orderService.findByPageable(page);
+		} else {			
+			orders = orderService.findByExpiryDate(expiry, page);
+		}
+		return new ResponseEntity<List<Order>>(orders, HttpStatus.OK);
+	}
 	
+	@GetMapping("/orders/{id}")
+	public ResponseEntity<Order> getBorrowOrder(@PathVariable Long id) throws OrderNotFoundException, UpdateOrderFailedException {
+		Order order = orderService.findOrder(id);
+		
+		Link linkSelf = linkTo(methodOn(OrderController.class)
+				.getBorrowOrder(order.getId()))
+				.withRel("self");
+		order.add(linkSelf);
+		
+		Link linkUpdateBorrowOrder = linkTo(methodOn(OrderController.class)
+				.updateOrder(order.getId(), null))
+				.withRel("update_borrow_order");
+		order.add(linkUpdateBorrowOrder);
+		
+		Link linkReturn = linkTo(methodOn(OrderController.class)
+				.deleteBookOrder(order.getId()))
+				.withRel("return_book");
+		order.add(linkReturn);
+		
+		return new ResponseEntity<Order>(order, HttpStatus.OK);
+	}
+	
+	@PutMapping("/orders/{id}")
+	public ResponseEntity<Order> updateOrder(@PathVariable Long id, @RequestBody Order order) throws OrderNotFoundException, UpdateOrderFailedException {
+		Order updatedOrder = orderService.updateOrder(order, id);
+		
+		Link linkSelf = linkTo(methodOn(OrderController.class)
+				.getBorrowOrder(updatedOrder.getId()))
+				.withRel("self");
+		updatedOrder.add(linkSelf);
+		
+		Link linkUpdateBorrowOrder = linkTo(methodOn(OrderController.class)
+				.updateOrder(updatedOrder.getId(), null))
+				.withRel("update_borrow_order");
+		updatedOrder.add(linkUpdateBorrowOrder);
+		
+		Link linkReturn = linkTo(methodOn(OrderController.class)
+				.deleteBookOrder(updatedOrder.getId()))
+				.withRel("return_book");
+		updatedOrder.add(linkReturn);
+		
+		return new ResponseEntity<Order>(updatedOrder, HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/orders/{id}")
+	public ResponseEntity<Void> deleteBookOrder(@PathVariable Long id) {
+		orderService.deleteOrder(id);
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
 }

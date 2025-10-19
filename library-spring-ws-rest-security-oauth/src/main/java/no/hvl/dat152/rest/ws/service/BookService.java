@@ -4,6 +4,7 @@
 package no.hvl.dat152.rest.ws.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +24,58 @@ import no.hvl.dat152.rest.ws.repository.BookRepository;
 @Service
 public class BookService {
 
-	// TODO copy your solutions from previous tasks!
+	@Autowired
+	private BookRepository bookRepository;
+	
 	
 	public Book saveBook(Book book) {
 		
-		// TODO
+		return bookRepository.save(book);
 		
-		return null;
+	}
+	
+	public List<Book> findAll(){
 		
+		return (List<Book>) bookRepository.findAll();
+		
+	}
+	
+	
+	public Book findByISBN(String isbn) throws BookNotFoundException {
+		
+		Book book = bookRepository.findByIsbn(isbn)
+				.orElseThrow(() -> new BookNotFoundException("Book with isbn = "+isbn+" not found!"));
+		
+		return book;
+	}
+	
+	public Book updateBook(Book book, String isbn) throws BookNotFoundException, UpdateBookFailedException {
+		Book managedBook = findByISBN(isbn);
+		if (book.getTitle() == null) throw new UpdateBookFailedException("Title can not be null");
+		managedBook.setTitle(book.getTitle());
+		if (book.getAuthors() == null) throw new UpdateBookFailedException("Authors can not be null");
+		managedBook.setAuthors(book.getAuthors());
+		return bookRepository.save(managedBook);
+	}
+	
+	// TODO public List<Book> findAllPaginate(Pageable page)
+	
+	// TODO public Set<Author> findAuthorsOfBookByISBN(String isbn)
+	public Set<Author> findAuthorsOfBookByISBN(String isbn) throws BookNotFoundException {
+		return this.findByISBN(isbn).getAuthors();
+	}
+	
+	public void deleteById(long id) {
+		Optional<Book> managedBook = bookRepository.findById(id);
+		if (managedBook.isEmpty()) return;
+		
+		bookRepository.delete(managedBook.get());
+	}
+	
+	public void deleteByISBN(String isbn) {
+		Optional<Book> managedBook = bookRepository.findByIsbn(isbn);
+		if (managedBook.isEmpty()) return;
+		
+		bookRepository.delete(managedBook.get());
 	}
 }

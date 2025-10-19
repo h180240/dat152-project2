@@ -19,7 +19,7 @@ import no.hvl.dat152.rest.ws.model.Order;
 /**
  * 
  */
-public interface OrderRepository extends CrudRepository<Order, Long>, PagingAndSortingRepository<Order, Long> {
+public interface OrderRepository extends CrudRepository<Order, Long> {
 
 	
 	@Query(value = "SELECT user_id FROM orders WHERE id = :id", nativeQuery=true)
@@ -33,7 +33,7 @@ public interface OrderRepository extends CrudRepository<Order, Long>, PagingAndS
 	
 	List<Order> findAll(Sort sort);
 	
-	Page<Order> findAll(Pageable pageable);
+	List<Order> findAll(Pageable pageable);
 	
 	Page<Order> findByExpiryBefore(LocalDate expiry, Pageable pageable);
 	

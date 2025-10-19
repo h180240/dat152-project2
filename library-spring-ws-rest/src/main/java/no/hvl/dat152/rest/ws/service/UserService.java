@@ -44,12 +44,10 @@ public class UserService {
 		return user;
 	}
 	
-	// TODO public User saveUser(User user)
 	public User saveUser(User user) {
 		return userRepository.save(user);
 	}
 	
-	// TODO public void deleteUser(Long id) throws UserNotFoundException 
 	public void deleteUser(Long id) {
 		Optional<User> managedUser = userRepository.findById(id);
 		if (managedUser.isEmpty()) return;
@@ -57,7 +55,6 @@ public class UserService {
 		userRepository.delete(managedUser.get());
 	}
 	
-	// TODO public User updateUser(User user, Long id)
 	public User updateUser(User user, Long id) throws UserNotFoundException {
 		User managedUser = this.findUser(id);
 		managedUser.setFirstname(user.getFirstname());
@@ -66,13 +63,11 @@ public class UserService {
 		return userRepository.save(user);
 	}
 	
-	// TODO public Set<Order> getUserOrders(Long userid) 
 	public Set<Order> getUserOrders(Long userid) throws UserNotFoundException {
 		User managedUser = this.findUser(userid);
 		return managedUser.getOrders();
 	}
 	
-	// TODO public Order getUserOrder(Long userid, Long oid)
 	public Order getUserOrder(Long userid, Long orderid) throws UserNotFoundException, OrderNotFoundException {
 		User managedUser = this.findUser(userid);
 		for (Order order : managedUser.getOrders()) {
@@ -81,14 +76,12 @@ public class UserService {
 		throw new OrderNotFoundException("No order with id: "+orderid+" found");
 	}
 	
-	// TODO public void deleteOrderForUser(Long userid, Long oid)
 	public void deleteOrderForUser(Long userid, Long oid) throws UserNotFoundException, OrderNotFoundException {
 		User user = this.findUser(userid);
 		Order order = orderService.findOrder(oid);
 		user.getOrders().remove(order);
 	}
 	
-	// TODO public User createOrdersForUser(Long userid, Order order)
 	public User createOrdersForUser(Long userid, Order order) throws UserNotFoundException {
 		User managedUser = this.findUser(userid);
 		managedUser.addOrder(order);

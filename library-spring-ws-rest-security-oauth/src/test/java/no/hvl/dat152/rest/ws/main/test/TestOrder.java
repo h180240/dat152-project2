@@ -80,7 +80,7 @@ class TestOrder {
 	    		.get(API_ROOT+"/orders/{id}", 2);
 	    
 	    assertEquals(HttpStatus.OK.value(), response.getStatusCode());
-	    assertEquals("ghijk1234", response.jsonPath().get("isbn"));
+	    assertEquals("qabfde1230", response.jsonPath().get("isbn"));
 	}
 	
 	@DisplayName("JUnit test for @PutMapping(/orders/{id}) endpoint")
