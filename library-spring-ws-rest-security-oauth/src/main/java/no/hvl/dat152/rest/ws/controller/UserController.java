@@ -109,7 +109,7 @@ public class UserController {
 	
 	@PostMapping("/users/{userid}/orders")
 	@IsAdminOrThisUser
-	public ResponseEntity<Order> createUserOrder(@PathVariable Long userid, @RequestBody Order order) throws UserNotFoundException, OrderNotFoundException, UpdateOrderFailedException {
+	public ResponseEntity<List<Order>> createUserOrder(@PathVariable Long userid, @RequestBody Order order) throws UserNotFoundException, OrderNotFoundException, UpdateOrderFailedException {
 		Order managedOrder = orderService.saveOrder(order);
 		userService.createOrdersForUser(userid, managedOrder);
 		
@@ -130,7 +130,7 @@ public class UserController {
 				.withRel("return_book");
 		updatedOrder.add(linkReturn);
 		
-		return new ResponseEntity<>(managedOrder, HttpStatus.CREATED);
+		return new ResponseEntity<>(List.of(managedOrder), HttpStatus.CREATED);
 	}
 	
 }

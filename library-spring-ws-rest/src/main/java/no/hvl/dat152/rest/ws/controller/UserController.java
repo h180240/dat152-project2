@@ -107,27 +107,28 @@ public class UserController {
 	// TODO - createUserOrder (@Mappings, URI, and method) + HATEOAS links
 	// TODO HATEOAS
 	@PostMapping("/users/{id}/orders")
-	public ResponseEntity<Order> createUserOrder(@PathVariable Long id, @RequestBody Order order) throws UserNotFoundException, OrderNotFoundException, UpdateOrderFailedException {
-		Order managedOrder = orderService.saveOrder(order);
-		userService.createOrdersForUser(id, managedOrder);
+	public ResponseEntity<Set<Order>> createUserOrder(@PathVariable Long id, @RequestBody Order order) throws UserNotFoundException, OrderNotFoundException, UpdateOrderFailedException {
+		User user = userService.createOrdersForUser(id, order);
 		
-		Order updatedOrder = orderService.updateOrder(order, id);
+		Set<Order> orders = user.getOrders();
 		
-		Link linkSelf = linkTo(methodOn(OrderController.class)
-				.getBorrowOrder(updatedOrder.getId()))
-				.withRel("self");
-		updatedOrder.add(linkSelf);
+		for (Order _order : orders) {
+			Link linkSelf = linkTo(methodOn(OrderController.class)
+					.getBorrowOrder(_order.getId()))
+					.withRel("self");
+			_order.add(linkSelf);
+			
+			Link linkUpdateBorrowOrder = linkTo(methodOn(OrderController.class)
+					.updateOrder(_order.getId(), null))
+					.withRel("update_borrow_order");
+			_order.add(linkUpdateBorrowOrder);
+			
+			Link linkReturn = linkTo(methodOn(OrderController.class)
+					.deleteBookOrder(_order.getId()))
+					.withRel("return_book");
+			_order.add(linkReturn);
+		}
 		
-		Link linkUpdateBorrowOrder = linkTo(methodOn(OrderController.class)
-				.updateOrder(updatedOrder.getId(), null))
-				.withRel("update_borrow_order");
-		updatedOrder.add(linkUpdateBorrowOrder);
-		
-		Link linkReturn = linkTo(methodOn(OrderController.class)
-				.deleteBookOrder(updatedOrder.getId()))
-				.withRel("return_book");
-		updatedOrder.add(linkReturn);
-		
-		return new ResponseEntity<>(managedOrder, HttpStatus.CREATED);
+		return new ResponseEntity<>(orders, HttpStatus.CREATED);
 	}
 }
