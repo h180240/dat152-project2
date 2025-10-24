@@ -61,7 +61,7 @@ public class OrderService {
 	}
 	
 	public List<Order> findByPageable(Pageable pageable) {
-		return orderRepository.findAll(pageable);
+		return orderRepository.findAll(pageable).getContent();
 	}
 	
 	// TODO public Order updateOrder(Order order, Long id)
