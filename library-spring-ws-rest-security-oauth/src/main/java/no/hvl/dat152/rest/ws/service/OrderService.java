@@ -65,7 +65,7 @@ public class OrderService {
 	}
 	
 	public List<Order> findByPageable(Pageable pageable) {
-		return orderRepository.findAll(pageable);
+		return orderRepository.findAll(pageable).getContent();
 	}
 	
 	public Order updateOrder(Order order, Long id) throws OrderNotFoundException, UpdateOrderFailedException {
