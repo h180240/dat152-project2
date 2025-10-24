@@ -24,7 +24,7 @@ import org.springframework.security.web.SecurityFilterChain;
  * @author tdoy
  */
 @Configuration
-@EnableMethodSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class ApplicationSecurity {
 	
 	@Autowired

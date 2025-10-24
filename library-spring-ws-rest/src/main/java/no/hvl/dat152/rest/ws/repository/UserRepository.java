@@ -3,6 +3,7 @@
  */
 package no.hvl.dat152.rest.ws.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 
 import no.hvl.dat152.rest.ws.model.User;

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -62,16 +63,28 @@ public class BookController {
 	
 	@PostMapping("/books")
 	public ResponseEntity<Book> createBook(@RequestBody Book book){
-		
 		Book nbook = bookService.saveBook(book);
 		
 		return new ResponseEntity<>(nbook, HttpStatus.CREATED);
 	}
 	
 	// TODO - getAuthorsOfBookByISBN (@Mappings, URI, and method)
+	@GetMapping("/books/{isbn}/authors")
+	public Set<Author> getAuthorsOfBookByISBN(@PathVariable String isbn) throws BookNotFoundException {
+		Set<Author> authors = bookService.findAuthorsOfBookByISBN(isbn);
+		return authors;
+	}
 	
-	// TODO - updateBookByISBN (@Mappings, URI, and method)
+	@PutMapping("/books/{isbn}")
+	public ResponseEntity<Book> updateBookByISBN(@PathVariable String isbn, @RequestBody Book book) throws BookNotFoundException, UpdateBookFailedException{
+		Book managedBook = bookService.updateBook(book, isbn);
+		return new ResponseEntity<Book>(managedBook, HttpStatus.OK);
+	}
 	
-	// TODO - deleteBookByISBN (@Mappings, URI, and method)
+	@DeleteMapping("/books/{isbn}")
+	public ResponseEntity<Void> deleteBookByISBN(@PathVariable String isbn) {
+		bookService.deleteByISBN(isbn);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
 
 }

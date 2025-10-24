@@ -28,6 +28,7 @@ import no.hvl.dat152.rest.ws.exceptions.BookNotFoundException;
 import no.hvl.dat152.rest.ws.exceptions.UpdateBookFailedException;
 import no.hvl.dat152.rest.ws.model.Author;
 import no.hvl.dat152.rest.ws.model.Book;
+import no.hvl.dat152.rest.ws.security.IsAdmin;
 import no.hvl.dat152.rest.ws.service.BookService;
 
 /**
@@ -35,8 +36,57 @@ import no.hvl.dat152.rest.ws.service.BookService;
  */
 @RestController
 @RequestMapping("/elibrary/api/v1")
+@IsAdmin
 public class BookController {
 
-	// TODO authority annotation
+	@Autowired
+	private BookService bookService;
+	
+	@GetMapping("/books")
+	public ResponseEntity<Object> getAllBooks(){
+		
+		List<Book> books = bookService.findAll();
+		
+		if(books.isEmpty())
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		
+		return new ResponseEntity<>(books, HttpStatus.OK);		
+	}
+	
+	@GetMapping("/books/{isbn}")
+	public ResponseEntity<Object> getBook(@PathVariable String isbn) throws BookNotFoundException{
+		
+		Book book = bookService.findByISBN(isbn);
+		
+		return new ResponseEntity<>(book, HttpStatus.OK);
+				
+	}
+	
+	@PostMapping("/books")
+	public ResponseEntity<Book> createBook(@RequestBody Book book){
+		Book nbook = bookService.saveBook(book);
+		
+		return new ResponseEntity<>(nbook, HttpStatus.CREATED);
+	}
+	
+	// TODO - getAuthorsOfBookByISBN (@Mappings, URI, and method)
+	@GetMapping("/books/{isbn}/authors")
+	public Set<Author> getAuthorsOfBookByISBN(@PathVariable String isbn) throws BookNotFoundException {
+		Set<Author> authors = bookService.findAuthorsOfBookByISBN(isbn);
+		return authors;
+	}
+	
+	@PutMapping("/books/{isbn}")
+	public ResponseEntity<Book> updateBookByISBN(@PathVariable String isbn, @RequestBody Book book) throws BookNotFoundException, UpdateBookFailedException{
+		Book managedBook = bookService.updateBook(book, isbn);
+		return new ResponseEntity<Book>(managedBook, HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/books/{isbn}")
+	public ResponseEntity<Void> deleteBookByISBN(@PathVariable String isbn) {
+		bookService.deleteByISBN(isbn);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
 
+	
 }

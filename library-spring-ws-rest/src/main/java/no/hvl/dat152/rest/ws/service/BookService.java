@@ -4,6 +4,7 @@
 package no.hvl.dat152.rest.ws.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,14 +49,34 @@ public class BookService {
 		return book;
 	}
 	
-	// TODO public Book updateBook(Book book, String isbn)
+	public Book updateBook(Book book, String isbn) throws BookNotFoundException, UpdateBookFailedException {
+		Book managedBook = findByISBN(isbn);
+		if (book.getTitle() == null) throw new UpdateBookFailedException("Title can not be null");
+		managedBook.setTitle(book.getTitle());
+		if (book.getAuthors() == null) throw new UpdateBookFailedException("Authors can not be null");
+		managedBook.setAuthors(book.getAuthors());
+		return bookRepository.save(managedBook);
+	}
 	
 	// TODO public List<Book> findAllPaginate(Pageable page)
 	
 	// TODO public Set<Author> findAuthorsOfBookByISBN(String isbn)
+	public Set<Author> findAuthorsOfBookByISBN(String isbn) throws BookNotFoundException {
+		return this.findByISBN(isbn).getAuthors();
+	}
 	
-	// TODO public void deleteById(long id)
+	public void deleteById(long id) {
+		Optional<Book> managedBook = bookRepository.findById(id);
+		if (managedBook.isEmpty()) return;
+		
+		bookRepository.delete(managedBook.get());
+	}
 	
-	// TODO public void deleteByISBN(String isbn) 
+	public void deleteByISBN(String isbn) {
+		Optional<Book> managedBook = bookRepository.findByIsbn(isbn);
+		if (managedBook.isEmpty()) return;
+		
+		bookRepository.delete(managedBook.get());
+	}
 	
 }
